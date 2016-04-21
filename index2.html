@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" id="html">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript">
+    /*
+                    state changes:
+                    - url
+                    - city
+                    - html   
+                    -  
+                    pixabay: 2425109-ad1fba81c95ff073455dad4d5
+                    https://pixabay.com/api/?key=2425109-ad1fba81c95ff073455dad4d5&q=sydney&image_type=photo
+                    */
+
+    function createRequest(fun) {
+      var request = new XMLHttpRequest();
+      var city = document.getElementById("search").value;
+      var url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=8a35f5f43c63e226825cb723c126531d";
+      request.open("get", url, true);
+      request.send();
+      fun(city);
+
+      request.onreadystatechange = function() {
+        if (request.readyState === 4 && request.status === 200) {
+          var response = request.responseText;
+          document.getElementById('city').innerHTML = JSON.parse(response)['name'];
+          document.getElementById('weather').innerHTML = JSON.parse(response)['weather'][0]['main'];
+          document.getElementById('icon').setAttribute("src", "http://openweathermap.org/img/w/" + JSON.parse(response)['weather'][0]['icon'] + ".png");
+        }
+      };
+    }
+
+    function getPicture(city) {
+      var pix = new XMLHttpRequest();
+      var pixurl = "https://pixabay.com/api/?key=2425109-ad1fba81c95ff073455dad4d5&q=" + city + "&image_type=photo";
+      pix.open("get", pixurl, true);
+      pix.send();
+
+      pix.onreadystatechange = function() {
+        if (pix.readyState === 4 && pix.status === 200) {
+          pixresp = JSON.parse(pix.responseText);
+          var hits = pixresp["hits"].length;
+          var randomHit = Math.floor(Math.random() * hits);
+          console.log(hits, randomHit);
+          imageurl = pixresp["hits"][randomHit]["webformatURL"];
+          piximage = imageurl.substring(0, imageurl.length - 7) + "960.jpg";
+          //document.getElementById("image").setAttribute("src", piximage);
+          document.getElementById("html").style.backgroundImage = "url(" + piximage + ")";
+        }
+      };
+    }
+
+
+
+
+    //html.style.backgroundImage="url(http://www.discovertheforest.org/images/hero/home/6.jpg)";
+    //html.style.backgroundRepeat = "no-repeat";
+    //html.style.backgroundSize="100%";
+    //html.style.backgroundPosition="center";
+
+
+    //request.abort();
+  </script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="./css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="./css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="./js/jquery.min.js"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="./js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <h1>What's the weather?</h1>
+  <form class="form-inline">
+    <div class="form-group">
+      <input id="search" type="text" class="form-control" placeholder="Enter city and press Enter..."></input><button type="submit" class="btn btn-default">Search</button>
+    </div>
+  </form>
+  <h3 class="panel-title"><p id="city"></p></h3>
+  <p id="weather"></p>
+  <img id="icon" src=""></img>
+  <img id="image" src=""></img>
+  <style>
+    html {
+      background: no-repeat center center fixed url();
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+  </style>
+  <script>
+    (function() {
+      var form = document.querySelector("input");
+      form.addEventListener("submit", function(event) {
+        console.log("Saving value", form.value);
+        event.preventDefault();
+
+      })
+    })();
+  </script>
+  <!--
+          document.querySelector('input').addEventListener('keydown', function(e) {
+        if (e.keyCode === 13) {
+          // do whatever you want with the value
+          createRequest(getPicture);
+        }
+      });
+      -->
+</body>
+
+</html>
